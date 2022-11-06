@@ -35,3 +35,23 @@ func (r *AdminDB) GetUserById(id string) (*model.User, error) {
 func (r *AdminDB) UpdateUser(user *model.User) error {
 	return r.gormDB.Save(user).Error
 }
+
+func (r *AdminDB) CreateDoctor(doctor *model.Doctor) error {
+	return r.gormDB.Create(doctor).Error
+}
+
+func (r *AdminDB) GetAllDoctors() ([]*model.Doctor, error) {
+	var doctors []*model.Doctor
+
+	return doctors, r.gormDB.Find(&doctors).Error
+}
+
+func (r *AdminDB) GetDoctorById(id string) (*model.Doctor, error) {
+	var doctor model.Doctor
+
+	return &doctor, r.gormDB.First(&doctor, id).Error
+}
+
+func (r *AdminDB) UpdateDoctor(doctor *model.Doctor) error {
+	return r.gormDB.Save(doctor).Error
+}

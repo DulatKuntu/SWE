@@ -12,6 +12,10 @@ type Admin interface {
 	GetAllUsers() ([]*model.User, error)
 	GetUserById(id string) (*model.User, error)
 	UpdateUser(user *model.User) error
+	CreateDoctor(doctor *model.Doctor) error
+	GetAllDoctors() ([]*model.Doctor, error)
+	GetDoctorById(id string) (*model.Doctor, error)
+	UpdateDoctor(doctor *model.Doctor) error
 }
 
 type Repository struct {

@@ -17,6 +17,7 @@ func NewHandler(services *service.Service) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 	admin := router.Group("/admin")
+	admin.POST("/login", h.loginAdmin)
 	{
 		user := admin.Group("/user")
 		{
@@ -24,6 +25,14 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			user.GET("/getAll", h.getAllUsers)
 			user.GET("/get/:id", h.getUserById)
 			user.POST("/update", h.updateUser)
+		}
+		doctor := admin.Group("/doctor")
+		{
+			doctor.POST("/create", h.createDoctor)
+			doctor.GET("/getAll", h.getAllDoctors)
+			doctor.GET("/get/:id", h.getDoctorById)
+			doctor.POST("/update", h.updateDoctor)
+
 		}
 	}
 	return router

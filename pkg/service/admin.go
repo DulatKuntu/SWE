@@ -30,3 +30,19 @@ func (s *AdminService) GetUserById(id string) (*model.User, error) {
 func (s *AdminService) UpdateUser(user *model.User) error {
 	return s.repo.UpdateUser(user)
 }
+
+func (s *AdminService) CreateDoctor(doctor *model.Doctor) error {
+	return s.repo.CreateDoctor(doctor)
+}
+
+func (s *AdminService) GetAllDoctors() ([]*model.Doctor, error) {
+	return s.repo.GetAllDoctors()
+}
+
+func (s *AdminService) GetDoctorById(id string) (*model.Doctor, error) {
+	return s.repo.GetDoctorById(id)
+}
+
+func (s *AdminService) UpdateDoctor(doctor *model.Doctor) error {
+	return s.repo.UpdateDoctor(doctor)
+}

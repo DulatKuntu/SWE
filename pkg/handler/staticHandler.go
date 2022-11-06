@@ -22,7 +22,7 @@ func NewStaticHandler(services *service.Service) *StaticHandler {
 func (h *StaticHandler) InitRoutes() *gin.Engine {
 	router := gin.New()
 	router.POST("/upload", h.uploadImage)
-	router.GET("/itemImage/:fileName", h.ItemImageHandler)
+	router.GET("/image/:fileName", h.ItemImageHandler)
 	return router
 }
 
