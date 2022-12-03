@@ -2,7 +2,9 @@ package handler
 
 import (
 	"errors"
+	"log"
 	"os"
+	"strconv"
 	"swe/model"
 
 	"github.com/gin-gonic/gin"
@@ -81,7 +83,15 @@ func (h *Handler) createDoctor(c *gin.Context) {
 }
 
 func (h *Handler) getAllDoctors(c *gin.Context) {
-	doctors, err := h.services.Admin.GetAllDoctors()
+	specialization := c.Request.URL.Query().Get("specialization")
+	specializationID, err := strconv.Atoi(specialization)
+	if err != nil {
+		specializationID = 0
+	}
+	log.Print(specializationID)
+	search := c.Request.URL.Query().Get("search")
+	log.Print(search)
+	doctors, err := h.services.Admin.GetAllDoctors(search, specializationID)
 
 	if err != nil {
 		defaultErrorHandler(c, err)
@@ -134,4 +144,60 @@ func (h *Handler) loginAdmin(c *gin.Context) {
 	}
 
 	sendGeneral(admin, c)
+}
+
+func (h *Handler) createSpecialization(c *gin.Context) {
+	var specialization model.Specialization
+
+	if err := specialization.ParseRequest(c); err != nil {
+		defaultErrorHandler(c, err)
+		return
+	}
+
+	if err := h.services.Admin.CreateSpecialization(&specialization); err != nil {
+		defaultErrorHandler(c, err)
+		return
+	}
+
+	sendGeneral(specialization, c)
+}
+
+func (h *Handler) getAllSpecializations(c *gin.Context) {
+	specializations, err := h.services.Admin.GetAllSpecializations()
+
+	if err != nil {
+		defaultErrorHandler(c, err)
+		return
+	}
+
+	sendGeneral(specializations, c)
+}
+
+func (h *Handler) getSpecializationById(c *gin.Context) {
+	id := c.Param("id")
+
+	specialization, err := h.services.Admin.GetSpecializationById(id)
+
+	if err != nil {
+		defaultErrorHandler(c, err)
+		return
+	}
+
+	sendGeneral(specialization, c)
+}
+
+func (h *Handler) updateSpecialization(c *gin.Context) {
+	var specialization model.Specialization
+
+	if err := specialization.ParseRequest(c); err != nil {
+		defaultErrorHandler(c, err)
+		return
+	}
+
+	if err := h.services.Admin.UpdateSpecialization(&specialization); err != nil {
+		defaultErrorHandler(c, err)
+		return
+	}
+
+	sendGeneral(specialization, c)
 }

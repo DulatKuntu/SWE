@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"log"
 	"swe/model"
 
 	"gorm.io/gorm"
@@ -40,10 +41,48 @@ func (r *AdminDB) CreateDoctor(doctor *model.Doctor) error {
 	return r.gormDB.Create(doctor).Error
 }
 
-func (r *AdminDB) GetAllDoctors() ([]*model.Doctor, error) {
+func (r *AdminDB) GetAllDoctors(search string, specializationID int) ([]*model.DoctorResponse, error) {
 	var doctors []*model.Doctor
+	var specialization model.Specialization
+	var doctorsResponses []*model.DoctorResponse
 
-	return doctors, r.gormDB.Find(&doctors).Error
+	if specializationID == 0 {
+		err := r.gormDB.Where("name LIKE ? OR surname LIKE ?", search, search).Find(&doctors).Error
+		if err != nil {
+			return nil, err
+		}
+		log.Print(doctors)
+		for _, doctor := range doctors {
+			doctorResponses := &model.DoctorResponse{}
+			doctorResponses.ReadDoctor(doctor)
+			log.Print(doctorResponses)
+			err = r.gormDB.Where("id = ?", doctor.SpecializationID).Find(&specialization).Error
+			if err != nil {
+				return nil, err
+			}
+			doctorResponses.Specialization = specialization.Name
+			doctorsResponses = append(doctorsResponses, doctorResponses)
+		}
+	} else {
+		err := r.gormDB.Where("name LIKE ? OR surname LIKE ? AND specialization_id = ?", search, search, specializationID).Find(&doctors).Error
+		if err != nil {
+			return nil, err
+		}
+		for _, doctor := range doctors {
+			doctorResponses := &model.DoctorResponse{}
+			doctorResponses.ReadDoctor(doctor)
+			err = r.gormDB.Where("id = ?", doctor.SpecializationID).Find(&specialization).Error
+			if err != nil {
+				return nil, err
+			}
+			doctorResponses.Specialization = specialization.Name
+			doctorsResponses = append(doctorsResponses, doctorResponses)
+		}
+	}
+	if len(doctorsResponses) == 0 {
+		doctorsResponses = []*model.DoctorResponse{}
+	}
+	return doctorsResponses, r.gormDB.Find(&doctors).Error
 }
 
 func (r *AdminDB) GetDoctorById(id string) (*model.Doctor, error) {
@@ -54,4 +93,24 @@ func (r *AdminDB) GetDoctorById(id string) (*model.Doctor, error) {
 
 func (r *AdminDB) UpdateDoctor(doctor *model.Doctor) error {
 	return r.gormDB.Save(doctor).Error
+}
+
+func (r *AdminDB) CreateSpecialization(specialization *model.Specialization) error {
+	return r.gormDB.Create(specialization).Error
+}
+
+func (r *AdminDB) GetAllSpecializations() ([]*model.Specialization, error) {
+	var specializations []*model.Specialization
+
+	return specializations, r.gormDB.Find(&specializations).Error
+}
+
+func (r *AdminDB) GetSpecializationById(id string) (*model.Specialization, error) {
+	var specialization model.Specialization
+
+	return &specialization, r.gormDB.First(&specialization, id).Error
+}
+
+func (r *AdminDB) UpdateSpecialization(specialization *model.Specialization) error {
+	return r.gormDB.Save(specialization).Error
 }

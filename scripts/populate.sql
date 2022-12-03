@@ -1,0 +1,1 @@
+INSERT INTO specializations VALUES (DEFAULT, 'Cardiologist');

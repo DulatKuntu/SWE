@@ -32,7 +32,13 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			doctor.GET("/getAll", h.getAllDoctors)
 			doctor.GET("/get/:id", h.getDoctorById)
 			doctor.POST("/update", h.updateDoctor)
-
+		}
+		specialization := admin.Group("/specialization")
+		{
+			specialization.POST("/create", h.createSpecialization)
+			specialization.GET("/getAll", h.getAllSpecializations)
+			specialization.GET("/get/:id", h.getSpecializationById)
+			specialization.POST("/update", h.updateSpecialization)
 		}
 	}
 	return router
