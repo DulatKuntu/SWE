@@ -8,8 +8,8 @@ import (
 )
 
 type User struct {
-	IIN              string    `json:"iin"`
 	ID               string    `json:"id" gorm:"primary_key"`
+	IIN              string    `json:"iin"`
 	Name             string    `json:"name"`
 	Surname          string    `json:"surname"`
 	MiddleName       string    `json:"middle_name"`

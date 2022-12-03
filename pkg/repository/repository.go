@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"swe/model"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -22,12 +23,19 @@ type Admin interface {
 	UpdateSpecialization(specialization *model.Specialization) error
 }
 
+type Doctor interface {
+	GetAvailableRecords(doctorID string, timeStamp time.Time) ([]time.Time, error)
+	CreateRecord(record *model.Record) error
+}
+
 type Repository struct {
 	Admin
+	Doctor
 }
 
 func NewRepository(db *sql.DB, gormDB *gorm.DB) *Repository {
 	return &Repository{
-		Admin: NewAdminDB(db, gormDB),
+		Admin:  NewAdminDB(db, gormDB),
+		Doctor: NewDoctorDB(db, gormDB),
 	}
 }

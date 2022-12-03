@@ -3,6 +3,7 @@ package service
 import (
 	"swe/model"
 	"swe/pkg/repository"
+	"time"
 )
 
 type Admin interface {
@@ -20,12 +21,19 @@ type Admin interface {
 	UpdateSpecialization(specialization *model.Specialization) error
 }
 
+type Doctor interface {
+	GetAvailableRecords(doctorID string, timeStamp time.Time) ([]time.Time, error)
+	CreateRecord(record *model.Record) error
+}
+
 type Service struct {
 	Admin
+	Doctor
 }
 
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
-		Admin: NewAdminService(repos),
+		Admin:  NewAdminService(repos),
+		Doctor: NewDoctorService(repos),
 	}
 }

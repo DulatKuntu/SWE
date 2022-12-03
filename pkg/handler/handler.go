@@ -41,5 +41,11 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			specialization.POST("/update", h.updateSpecialization)
 		}
 	}
+
+	doctors := router.Group("/doctors")
+	{
+		doctors.POST("/getAvailableRecords", h.getAvailableRecords)
+		doctors.POST("/createAppointment", h.createAppointment)
+	}
 	return router
 }
