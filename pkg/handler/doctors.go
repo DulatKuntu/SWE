@@ -32,3 +32,5 @@ func (h *Handler) createAppointment(c *gin.Context) {
 	}
 	sendSuccess(c)
 }
+
+func (h *Handler) getDoctorAppointments(c *gin.Context) {}
