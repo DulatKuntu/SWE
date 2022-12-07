@@ -1,5 +1,6 @@
 package utils
 
 const (
-	TypeIngredient = "Ingredient"
+	Users   = "user"
+	Doctors = "doctor"
 )

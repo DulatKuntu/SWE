@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"swe/model"
 
 	"github.com/gin-gonic/gin"
@@ -27,7 +26,6 @@ func (h *Handler) createAppointment(c *gin.Context) {
 		defaultErrorHandler(c, err)
 		return
 	}
-	log.Print(req)
 	if err := h.services.Doctor.CreateRecord(&req); err != nil {
 		defaultErrorHandler(c, err)
 		return

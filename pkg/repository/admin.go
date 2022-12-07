@@ -43,19 +43,17 @@ func (r *AdminDB) CreateDoctor(doctor *model.Doctor) error {
 
 func (r *AdminDB) GetAllDoctors(search string, specializationID int) ([]*model.DoctorResponse, error) {
 	var doctors []*model.Doctor
-	var specialization model.Specialization
 	var doctorsResponses []*model.DoctorResponse
-
+	log.Print(specializationID)
 	if specializationID == 0 {
 		err := r.gormDB.Where("name LIKE ? OR surname LIKE ?", search, search).Find(&doctors).Error
 		if err != nil {
 			return nil, err
 		}
-		log.Print(doctors)
 		for _, doctor := range doctors {
+			var specialization model.Specialization
 			doctorResponses := &model.DoctorResponse{}
 			doctorResponses.ReadDoctor(doctor)
-			log.Print(doctorResponses)
 			err = r.gormDB.Where("id = ?", doctor.SpecializationID).Find(&specialization).Error
 			if err != nil {
 				return nil, err
@@ -68,7 +66,9 @@ func (r *AdminDB) GetAllDoctors(search string, specializationID int) ([]*model.D
 		if err != nil {
 			return nil, err
 		}
+		log.Print(doctors)
 		for _, doctor := range doctors {
+			var specialization model.Specialization
 			doctorResponses := &model.DoctorResponse{}
 			doctorResponses.ReadDoctor(doctor)
 			err = r.gormDB.Where("id = ?", doctor.SpecializationID).Find(&specialization).Error
@@ -113,4 +113,22 @@ func (r *AdminDB) GetSpecializationById(id string) (*model.Specialization, error
 
 func (r *AdminDB) UpdateSpecialization(specialization *model.Specialization) error {
 	return r.gormDB.Save(specialization).Error
+}
+
+func (r *AdminDB) LoginUser(email, password string) (*model.User, error) {
+	var user model.User
+	err := r.gormDB.Where("email = ? AND password = ?", email, password).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (r AdminDB) LoginDoctor(iin, password string) (*model.Doctor, error) {
+	var doctor model.Doctor
+	err := r.gormDB.Where("iin = ? AND password = ?", iin, password).First(&doctor).Error
+	if err != nil {
+		return nil, err
+	}
+	return &doctor, nil
 }

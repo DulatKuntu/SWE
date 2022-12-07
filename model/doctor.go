@@ -53,6 +53,8 @@ func (d *DoctorResponse) ReadDoctor(p *Doctor) {
 type Doctor struct {
 	ID               string    `json:"id" gorm:"primary_key"`
 	IIN              string    `json:"iin"`
+	Password         string    `json:"password"`
+	Token            string    `json:"token"`
 	DateOfBirth      time.Time `json:"date_of_birth"`
 	Name             string    `json:"name"`
 	Surname          string    `json:"surname"`

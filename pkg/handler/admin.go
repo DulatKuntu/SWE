@@ -201,3 +201,39 @@ func (h *Handler) updateSpecialization(c *gin.Context) {
 
 	sendGeneral(specialization, c)
 }
+
+func (h *Handler) authorizeAdmin(c *gin.Context) {
+
+}
+
+func (h *Handler) loginUser(c *gin.Context) {
+	var user model.UserLogin
+
+	if err := user.ParseRequest(c); err != nil {
+		defaultErrorHandler(c, err)
+		return
+	}
+
+	res, err := h.services.Admin.LoginUser(user.Email, user.Password)
+	if err != nil {
+		defaultErrorHandler(c, err)
+		return
+	}
+	sendGeneral(res, c)
+}
+
+func (h *Handler) loginDoctor(c *gin.Context) {
+	var user model.DoctorLogin
+
+	if err := user.ParseRequest(c); err != nil {
+		defaultErrorHandler(c, err)
+		return
+	}
+
+	res, err := h.services.Admin.LoginDoctor(user.IIN, user.Password)
+	if err != nil {
+		defaultErrorHandler(c, err)
+		return
+	}
+	sendGeneral(res, c)
+}

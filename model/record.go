@@ -2,7 +2,6 @@ package model
 
 import (
 	"errors"
-	"log"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -32,7 +31,6 @@ func (p *DoctorRecordReq) ParseRequest(c *gin.Context) error {
 	if err := c.BindJSON(&p); err != nil {
 		return errors.New("bad request | " + err.Error())
 	}
-	log.Print(p)
 
 	return nil
 }

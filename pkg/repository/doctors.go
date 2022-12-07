@@ -24,10 +24,12 @@ func (r *DoctorDB) GetAvailableRecords(doctorID string, timeStamp time.Time) ([]
 	start := time.Date(timeStamp.Year(), timeStamp.Month(), timeStamp.Day(), 0, 0, 0, 0, timeStamp.Location())
 	end := time.Date(timeStamp.Year(), timeStamp.Month(), timeStamp.Day()+1, 0, 0, 0, 0, timeStamp.Location())
 	if err := r.gormDB.Table("records").Where("doctor_id = ? AND time >= ?::date AND time <= ?::date", doctorID, start, end).Find(&records).Error; err != nil {
-		log.Print(err)
 		return nil, err
 	}
+	log.Print(records, start, end)
 	var availableRecords []time.Time
+	start = time.Date(timeStamp.Year(), timeStamp.Month(), timeStamp.Day(), 8, 0, 0, 0, timeStamp.Location())
+	end = time.Date(timeStamp.Year(), timeStamp.Month(), timeStamp.Day(), 19, 0, 0, 0, timeStamp.Location())
 	for start.Before(end) {
 		var isAvailable = true
 		for _, record := range records {
@@ -46,14 +48,14 @@ func (r *DoctorDB) GetAvailableRecords(doctorID string, timeStamp time.Time) ([]
 
 func (r *DoctorDB) CreateRecord(record *model.Record) error {
 	oldRecord := &model.Record{}
-	if err := r.gormDB.Model(&model.Record{}).Where("doctor_id = ? AND time = ?", record.DoctorID, record.Time).First(&oldRecord).Error; err != nil {
-		if r.gormDB.Create(record).Error.Error() != "record not found" {
+	err := r.gormDB.Model(&model.Record{}).Where("doctor_id = ? AND time = ?", record.DoctorID, record.Time).First(&oldRecord).Error
+	if err != nil {
+		if err.Error() != "record not found" {
 			return err
 		}
 	}
-	log.Print(oldRecord)
-	if oldRecord != nil {
-		return errors.New("already exists")
+	if err.Error() == "record not found" {
+		return r.gormDB.Create(record).Error
 	}
-	return r.gormDB.Create(record).Error
+	return errors.New("record already exists")
 }

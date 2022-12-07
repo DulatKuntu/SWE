@@ -19,6 +19,8 @@ type Admin interface {
 	GetAllSpecializations() ([]*model.Specialization, error)
 	GetSpecializationById(id string) (*model.Specialization, error)
 	UpdateSpecialization(specialization *model.Specialization) error
+	LoginUser(email, password string) (*model.User, error)
+	LoginDoctor(iin, password string) (*model.Doctor, error)
 }
 
 type Doctor interface {
