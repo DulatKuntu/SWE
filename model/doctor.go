@@ -105,3 +105,13 @@ func (p *Specialization) ParseRequest(c *gin.Context) error {
 
 	return nil
 }
+
+type DoctorAppointment struct {
+	User
+	Time time.Time `json:"time"`
+}
+
+type UserAppointment struct {
+	Doctor
+	Time time.Time `json:"time"`
+}

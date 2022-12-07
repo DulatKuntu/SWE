@@ -21,11 +21,17 @@ func (h *Handler) getAvailableRecords(c *gin.Context) {
 }
 
 func (h *Handler) createAppointment(c *gin.Context) {
+	id, err := getUserId(c)
+	if err != nil {
+		defaultErrorHandler(c, err)
+		return
+	}
 	var req model.Record
 	if err := req.ParseRequest(c); err != nil {
 		defaultErrorHandler(c, err)
 		return
 	}
+	req.UserID = id
 	if err := h.services.Doctor.CreateRecord(&req); err != nil {
 		defaultErrorHandler(c, err)
 		return
@@ -33,4 +39,31 @@ func (h *Handler) createAppointment(c *gin.Context) {
 	sendSuccess(c)
 }
 
-func (h *Handler) getDoctorAppointments(c *gin.Context) {}
+func (h *Handler) getDoctorAppointments(c *gin.Context) {
+	id, err := getUserId(c)
+	if err != nil {
+		defaultErrorHandler(c, err)
+		return
+	}
+	res, err := h.services.GetDoctorAppointments(id)
+	if err != nil {
+		defaultErrorHandler(c, err)
+		return
+	}
+
+	sendGeneral(res, c)
+}
+
+func (h *Handler) getUserAppointments(c *gin.Context) {
+	id, err := getUserId(c)
+	if err != nil {
+		defaultErrorHandler(c, err)
+		return
+	}
+	res, err := h.services.GetUserAppointments(id)
+	if err != nil {
+		defaultErrorHandler(c, err)
+		return
+	}
+	sendGeneral(res, c)
+}

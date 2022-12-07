@@ -26,6 +26,8 @@ type Admin interface {
 type Doctor interface {
 	GetAvailableRecords(doctorID string, timeStamp time.Time) ([]time.Time, error)
 	CreateRecord(record *model.Record) error
+	GetDoctorAppointments(id string) ([]*model.DoctorAppointment, error)
+	GetUserAppointments(id string) ([]*model.UserAppointment, error)
 }
 
 type Service struct {

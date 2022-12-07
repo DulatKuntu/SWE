@@ -53,9 +53,46 @@ func (r *DoctorDB) CreateRecord(record *model.Record) error {
 		if err.Error() != "record not found" {
 			return err
 		}
+		if err.Error() == "record not found" {
+			return r.gormDB.Create(record).Error
+		}
 	}
-	if err.Error() == "record not found" {
-		return r.gormDB.Create(record).Error
-	}
+
 	return errors.New("record already exists")
+}
+
+func (r *DoctorDB) GetDoctorAppointments(id string) ([]*model.DoctorAppointment, error) {
+	doctorAppointments := []*model.DoctorAppointment{}
+	records := []*model.Record{}
+	if err := r.gormDB.Table("records").Where("doctor_id = ?", id).Find(&records).Error; err != nil {
+		return nil, err
+	}
+	log.Print(records)
+	for _, record := range records {
+		doctorAppointment := &model.User{}
+		if err := r.gormDB.Model(&model.User{}).Where("id = ?", record.UserID).First(&doctorAppointment).Error; err != nil {
+			return nil, err
+		}
+		log.Print(doctorAppointment)
+		doctorAppointments = append(doctorAppointments, &model.DoctorAppointment{User: *doctorAppointment, Time: record.Time})
+	}
+	return doctorAppointments, nil
+}
+
+func (r *DoctorDB) GetUserAppointments(id string) ([]*model.UserAppointment, error) {
+	userAppointments := []*model.UserAppointment{}
+	records := []*model.Record{}
+	if err := r.gormDB.Table("records").Where("user_id = ?", id).Find(&records).Error; err != nil {
+		return nil, err
+	}
+	log.Print(records)
+	for _, record := range records {
+		doctorAppointment := &model.Doctor{}
+		if err := r.gormDB.Model(&model.Doctor{}).Where("id = ?", record.DoctorID).First(&doctorAppointment).Error; err != nil {
+			return nil, err
+		}
+		log.Print(doctorAppointment)
+		userAppointments = append(userAppointments, &model.UserAppointment{Doctor: *doctorAppointment, Time: record.Time})
+	}
+	return userAppointments, nil
 }

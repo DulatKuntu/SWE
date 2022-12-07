@@ -43,9 +43,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		}
 	}
 
-	doctor := router.Group("/doctors")
+	doctor := router.Group("/doctors", h.doctorIdentity)
 	{
-		doctor.POST("getAppointments", h.getDoctorAppointments)
+		doctor.POST("/getAppointments", h.getDoctorAppointments)
 	}
 	router.POST("/login", h.loginDoctor)
 	router.POST("/userLogin", h.loginUser)
@@ -53,6 +53,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		user.POST("/getAvailableRecords", h.getAvailableRecords)
 		user.POST("/createAppointment", h.createAppointment)
+		user.POST("/getAppointments", h.getUserAppointments)
+
 	}
 	return router
 }
