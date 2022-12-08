@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"log"
 	"swe/model"
 
 	"gorm.io/gorm"
@@ -44,7 +43,6 @@ func (r *AdminDB) CreateDoctor(doctor *model.Doctor) error {
 func (r *AdminDB) GetAllDoctors(search string, specializationID int) ([]*model.DoctorResponse, error) {
 	var doctors []*model.Doctor
 	var doctorsResponses []*model.DoctorResponse
-	log.Print(specializationID)
 	if specializationID == 0 {
 		err := r.gormDB.Where("name LIKE ? OR surname LIKE ?", search, search).Find(&doctors).Error
 		if err != nil {
@@ -62,11 +60,10 @@ func (r *AdminDB) GetAllDoctors(search string, specializationID int) ([]*model.D
 			doctorsResponses = append(doctorsResponses, doctorResponses)
 		}
 	} else {
-		err := r.gormDB.Where("name LIKE ? OR surname LIKE ? AND specialization_id = ?", search, search, specializationID).Find(&doctors).Error
+		err := r.gormDB.Where("(name LIKE ? OR surname LIKE ?) AND specialization_id = ?", search, search, specializationID).Find(&doctors).Error
 		if err != nil {
 			return nil, err
 		}
-		log.Print(doctors)
 		for _, doctor := range doctors {
 			var specialization model.Specialization
 			doctorResponses := &model.DoctorResponse{}
